@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Loan Prepayment Calculator</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+    label {
+        display: block;
+        margin-bottom: 10px;
+        color: #555;
+    }
+    input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    li {
+        margin-bottom: 10px;
+        color: #333;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Home Loan Prepayment Calculator</h2>
+
+    <label for="loanAmount">Loan Amount (in rupees):</label>
+    <input type="number" id="loanAmount" placeholder="Loan Amount" required>
+
+    <label for="originalLoanTenure">Original Loan Tenure (in years):</label>
+    <input type="number" id="originalLoanTenure" placeholder="Original Loan Tenure" required>
+
+    <label for="currentRateOfInterest">Current Rate Of Interest (%):</label>
+    <input type="number" id="currentRateOfInterest" placeholder="Current Rate Of Interest" step="0.01" required>
+
+    <label for="prepaymentAmount">Prepayment Amount (in rupees):</label>
+    <input type="number" id="prepaymentAmount" placeholder="Prepayment Amount" value="0">
+
+    <label for="emiPaid">Number Of EMI's Paid:</label>
+    <input type="number" id="emiPaid" placeholder="EMI's Paid" value="0">
+
+    <button onclick="calculate()">Calculate</button>
+
+    <ul>
+        <li id="originalEMI"></li>
+        <li id="revisedEMI"></li>
+        <li id="savings"></li>
+    </ul>
+</div>
+
+<script>
+function calculate() {
+    var loanAmount = parseFloat(document.getElementById('loanAmount').value);
+    var originalLoanTenureYears = parseInt(document.getElementById('originalLoanTenure').value);
+    var currentRateOfInterest = parseFloat(document.getElementById('currentRateOfInterest').value);
+    var prepaymentAmount = parseFloat(document.getElementById('prepaymentAmount').value);
+    var emiPaid = parseInt(document.getElementById('emiPaid').value);
+
+    var monthlyInterestRate = currentRateOfInterest / 12 / 100;
+    var totalPayments = originalLoanTenureYears * 12;
+    var remainingPayments = totalPayments - emiPaid;
+
+    // Calculate original EMI
+    var originalEMI = Math.round((loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -totalPayments)));
+
+    // Calculate remaining balance after prepayment
+    var remainingBalance = loanAmount - prepaymentAmount;
+
+    // Calculate revised EMI after prepayment
+    var revisedEMI = Math.round((remainingBalance * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -remainingPayments)));
+
+    // Calculate total interest paid
+    var totalInterestOriginal = originalEMI * totalPayments - loanAmount;
+    var totalInterestRevised = revisedEMI * remainingPayments - remainingBalance;
+
+    // Calculate savings in interest
+    var savings = Math.round(totalInterestOriginal - totalInterestRevised);
+
+    document.getElementById('originalEMI').innerText = "Original EMI: ₹" + originalEMI;
+    document.getElementById('revisedEMI').innerText = "Revised EMI: ₹" + revisedEMI;
+    document.getElementById('savings').innerText = "Savings in Interest: ₹" + savings;
+}
+</script>
+
+</body>
+</html>
